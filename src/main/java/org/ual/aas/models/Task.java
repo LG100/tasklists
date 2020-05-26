@@ -1,8 +1,11 @@
 package org.ual.aas.models;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -14,6 +17,11 @@ public class Task {
 	private int id;
 	private String description;
 	private String state;
+	
+	
+	@ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "taskList_id")
+	private TaskList taskList_id;
 		
 	public Task() {
 		super();
@@ -48,4 +56,13 @@ public class Task {
 	public void setState(String state) {
 		this.state = state;
 	}
+
+	public TaskList getTaskList_id() {
+		return taskList_id;
+	}
+
+	public void setTaskList_id(TaskList taskList_id) {
+		this.taskList_id = taskList_id;
+	}
+	
 }

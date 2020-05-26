@@ -68,13 +68,16 @@ public class TaskListController {
         // Close session
         session.close();
 	}
-	public void writeTask(Task task) {
+	public void writeTask(Task task, int id ){
 		// TODO: change object id
         Session session = sessionFactory.openSession();
 		// Open Hibernate session
         session.beginTransaction();
         // Save TaskList object
-        session.save(task);
+        TaskList list = session.get(TaskList.class, id );
+       
+        list.getTasks().add(task);
+        session.save(list);
         session.getTransaction().commit();
         // Close session
         session.close();
@@ -98,7 +101,7 @@ public class TaskListController {
 		 session.beginTransaction();
 
 		 TaskList list = session.get(TaskList.class, id ); //Integer.parseInt(id));
-
+		 
 		 session.getTransaction().commit();
 
 		 return list;
@@ -116,42 +119,33 @@ public class TaskListController {
 		 session.getTransaction().commit();
 
 	 	 return t;
-//		 List<TaskList> lists = session.createQuery("from TaskList", TaskList.class).list();
-		 
-//		 Query query = session.createQuery("from Task");
-//
-//	       List<TaskList> lists = query.getResultList();
-//		
-		
-//		return null;
 	}
 	
 	public boolean hasTasksLists() {
 		// TODO Auto-generated method stub
 		Session session = sessionFactory.openSession();
-		
-		 
-//		 List<TaskList> lists = session.createQuery("from TaskList", TaskList.class).list();
-		 
-		 Query query = session.createQuery("from TaskList");
+			 
+		Query query = session.createQuery("from TaskList");
 
-	       List<TaskList> lists = query.getResultList();
+	    List<TaskList> lists = query.getResultList();
 		 
-		 session.beginTransaction();
-		 session.close();
-		 if (lists.size() >0) {
-			 return true;
-		 }else {
-			 return false;
-		 }
+		session.beginTransaction();
+		session.close();
+		if (lists.size() >0) {
+		 return true;
+		}else {
+		 return false;
+		}
 		 
 	}
 
-	public boolean hasTaskList(String name) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
+	public boolean hasTask(String taskListId, String taskId) {
+
+		return null != null;
+	}
+	
+	
 	public String createTaskList(String name) {
 		TaskList taskList = new TaskList(name);
 //		taskList.setName("Lista tarefa");
@@ -160,24 +154,16 @@ public class TaskListController {
 	}
 	
 
-//	public String createTaskListWithValue() {
-//		TaskList taskList = new TaskList();
-//		Task task = new Task();
-//		task.setDescription("lista criada");
-//		task.setState("em curso");
-//		taskList.addTask(task);
-//		this.writeTaskList(taskList);
-//		return ""+taskList.getId();
-//	}
-
 	public String createTask(String taskId, String description, String state) {
 		// TODO Auto-generated method stub
+		TaskList taskList = new TaskList();
 		Task task = new Task();
 		task.setState(state);
 		task.setDescription(description);
-		task.setId(Integer.valueOf(taskId));
-		
-		this.writeTask(task);
+//		task.setId(Integer.valueOf(taskId));
+//		taskList.setId();
+//		taskList.addTask(task);
+		this.writeTask(task, Integer.valueOf(taskId));
 		return ""+task.getId();
 	}
 
@@ -190,10 +176,9 @@ public class TaskListController {
 		// Open Hibernate session
         session.beginTransaction();
         // Remover TaskList object
-        String query = "DELETE from tasklist tl, task t, tasklist_task tt where tt.tasklist_id = " + taskListId + 
-        	"and tl.id = " + taskListId + "t.id = (select task_id )" ;
-        Query querys  = session.createQuery(query);
-        querys.executeUpdate();
+        TaskList tasklist = new TaskList();
+        tasklist.setId(Integer.valueOf(taskListId));
+        session.delete(tasklist);
         session.getTransaction().commit();
         // Close session
         session.close();
@@ -206,9 +191,9 @@ public class TaskListController {
 		// Open Hibernate session
         session.beginTransaction();
         // Remover TaskList object
-        String query = "DELETE from task where id = " + Id ; 
-        Query querys = session.createQuery(query); 
-        querys.executeUpdate();									// TODO: validar query  
+        Task task = new Task();
+        task.setId(Integer.valueOf(Id));
+        session.delete(task);
         session.getTransaction().commit();
         // Close session
         session.close();
@@ -216,10 +201,6 @@ public class TaskListController {
 
 	}
 	
-	public boolean hasTask(String taskListId, String taskId) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	public void changeTaskDescription(String taskId, String taskDescription) {
 
@@ -229,9 +210,12 @@ public class TaskListController {
 		// Open Hibernate session
         session.beginTransaction();
         // Remover TaskList object
-        String query = "UPDATE task set description = " + taskDescription + "where id = " + taskId ;
-        Query querys  = session.createQuery(query);
-        querys.executeUpdate();
+       
+        Task task = new Task();
+        task.setId(Integer.valueOf(taskId));
+        task.setDescription(taskDescription);
+        
+        session.update(task);
         session.getTransaction().commit();
         // Close session
         session.close();
@@ -246,9 +230,10 @@ public class TaskListController {
 		// Open Hibernate session
         session.beginTransaction();
         // Remover TaskList object
-        String query = "UPDATE task set state = " + status + "where id = " + taskId ;
-        Query querys  = session.createQuery(query);
-        querys.executeUpdate();
+        Task task = new Task();
+        task.setState(status);
+        task.setId(Integer.valueOf(taskId));
+        session.update(task);
         session.getTransaction().commit();
         // Close session
         session.close();
@@ -264,9 +249,10 @@ public class TaskListController {
 		// Open Hibernate session
         session.beginTransaction();
         // Remover TaskList object
-        String query = "UPDATE tasklist set name = " + newName + "where id = " + id ;
-        Query querys  = session.createQuery(query);
-        querys.executeUpdate();
+        TaskList tasklist = new TaskList();
+        tasklist.setName(newName);
+        tasklist.setId(Integer.valueOf(id));
+        session.update(tasklist);
         session.getTransaction().commit();
         // Close session
         session.close();

@@ -8,6 +8,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -23,7 +24,9 @@ public class TaskList {
 	@ElementCollection
 	@OneToMany(
 		    orphanRemoval = true,
+		    mappedBy="taskList_id",
 		    cascade = CascadeType.ALL)
+	
 	private List<Task> tasks;
 
 	public TaskList() {
@@ -33,7 +36,7 @@ public class TaskList {
 	public TaskList(String name) {
 		super();
 		this.name = name;
-		this.tasks = new ArrayList<Task>();
+		
 	}
 
 	public int getId() {

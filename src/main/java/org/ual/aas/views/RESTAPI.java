@@ -75,9 +75,9 @@ public class RESTAPI extends HttpServlet {
             try{
             Task task = controller.getTask( jsonObject.getInt("id"));
 
-//            String json = new Gson().toJson(task);
+            String json = new Gson().toJson(task);
 
-            writer.println(task);
+            writer.println(json);
             }catch (Exception e) {
             	System.out.println(e);
 				// TODO: handle exception
@@ -127,7 +127,7 @@ public class RESTAPI extends HttpServlet {
             JsonObject jsonObject = (JsonObject) Json.createReader(reader).readObject();
             PrintWriter writer = resp.getWriter();
             try {
-            String taskDescription = jsonObject.getString("name"); 
+            String taskDescription = jsonObject.getString("description"); 
             String taskId = jsonObject.getString("id"); 
             String state = jsonObject.getString("state");
             
@@ -158,7 +158,7 @@ public class RESTAPI extends HttpServlet {
             resp.setContentType("application/json");
 //			altera o estado da tarefa             
             controller.changeTaskStatus(taskId, status);
-            writer.println("Tarefa alterada : " + 
+            writer.println("Task changed : "  + 
             taskId.toString() +
             status.toString());
             
@@ -166,7 +166,7 @@ public class RESTAPI extends HttpServlet {
             controller.close();
             } catch (Exception e) {
             	System.out.println(e);
-            	writer.println("Nao adicionado.");
+            	writer.println("Didn't change!");
             }
     	}
     	else {
@@ -225,7 +225,7 @@ public class RESTAPI extends HttpServlet {
 //            String json = new Gson().toJson(task);
             
             controller.changeTaskDescription(taskId, taskDescription);
-            writer.println("Nome da tarefa alterada : " + 
+            writer.println("New task name: " + 
             taskId.toString() +
             taskDescription.toString());
             
@@ -234,7 +234,7 @@ public class RESTAPI extends HttpServlet {
             }catch (Exception e) {
             	System.out.println(e);
 				// TODO: handle exception
-            	writer.println("Alteracao nao efectuada");
+            	writer.println("Didn't change");
 			}
             writer.close();
             controller.close();
@@ -286,9 +286,13 @@ public class RESTAPI extends HttpServlet {
             	
             	String taskId = jsonObject.getString("idtask");
 //	            String json = new Gson().toJson(task);
+            	if (controller.hasTasksLists() == true ) {
             	controller.deleteTask(taskId);
-	
-	            writer.println(taskId.toString());
+            	writer.println(taskId.toString());
+            	}else {
+            		writer.println("Tasklist empty!");
+            	}
+	            
             }catch (Exception e) {
             	System.out.println(e);
 				// TODO: handle exception
