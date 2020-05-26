@@ -29,3 +29,5 @@ tasklists.iml
 .vscode/
 .settings/
 .idea/
+deploy
+redeploy
